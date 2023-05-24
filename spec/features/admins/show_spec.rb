@@ -23,10 +23,11 @@ RSpec.describe "Admin Shelters Show Page", type: :feature do
       @app2 = Application.create!(name: "Andy", street_address: "456 Downtown", city: "Anywhere", state: "HI", zip_code: "23456", description: "Anotha One -DJ Khaled", status: "Pending")
       @petapp3 = PetApplication.create!(application_id: @app2.id, pet_id: @pet1.id)
       @petapp4 = PetApplication.create!(application_id: @app2.id, pet_id: @pet3.id)
-      @petapp5 = PetApplication.create!(application_id: @app2.id, pet_id: @pet6.id)
+      @petapp5 = PetApplication.create!(application_id: @app2.id, pet_id: @pet6.id, pet_applications_status: "Pending")
 
       @app3 = Application.create!(name: "Jeff", street_address: "567 Sideways", city: "Somewhere", state: "DE", zip_code: "34567", description: "We the best -DJ Khaled", status: "Rejected")
       @petapp6 = PetApplication.create!(application_id: @app3.id, pet_id: @pet5.id, pet_applications_status: "Pending")
+      @petapp7 = PetApplication.create!(application_id: @app3.id, pet_id: @pet6.id, pet_applications_status: "Pending")
     end
 
     it "can approve pet applications" do
@@ -46,11 +47,10 @@ RSpec.describe "Admin Shelters Show Page", type: :feature do
         expect(page).to have_content(@pet5.name)
         expect(page).to have_content("Status: Pending")
         expect(page).to have_button("Approve Pet Application")
+        click_button("Approve Pet Application")
       end
 
       expect(@petapp6.pet_applications_status).to eq("Pending")
-
-      click_button("Approve Pet Application")
       expect(current_path).to eq("/admin/applications/#{@app3.id}")
 
       @pet5.reload
@@ -82,11 +82,10 @@ RSpec.describe "Admin Shelters Show Page", type: :feature do
         expect(page).to have_content("Status: Pending")
         expect(page).to have_button("Approve Pet Application")
         expect(page).to have_button("Reject Pet Application")
+        click_button("Reject Pet Application")
       end
 
       expect(@petapp6.pet_applications_status).to eq("Pending")
-
-      click_button("Reject Pet Application")
       expect(current_path).to eq("/admin/applications/#{@app3.id}")
 
       within "#pet_application-#{@pet5.id}" do
@@ -97,6 +96,59 @@ RSpec.describe "Admin Shelters Show Page", type: :feature do
       end
 
       expect(@petapp6.reload.pet_applications_status).to eq("Rejected")
+    end
+
+    # 14. Approved/Rejected Pets on one Application do not affect other Applications
+
+    # As a visitor
+    # When there are two applications in the system for the same pet
+    # When I visit the admin application show page for one of the applications
+    # And I approve or reject the pet for that application
+    # When I visit the other application's admin show page
+    # Then I do not see that the pet has been accepted or rejected for that application
+    # And instead I see buttons to approve or reject the pet for this specific application
+
+    it "pet application status changes do not affect other pet applications" do
+
+      visit "/admin/applications/#{@app3.id}"
+
+      within "#pet_application-#{@pet6.id}" do
+        expect(page).to have_content(@pet6.name)
+        expect(page).to have_content("Status: Pending")
+        expect(page).to have_button("Approve Pet Application")
+        expect(page).to have_button("Reject Pet Application")
+        click_button("Reject Pet Application")
+      end
+      
+      expect(@petapp7.reload.pet_applications_status).to eq("Rejected")
+      expect(current_path).to eq("/admin/applications/#{@app3.id}")
+
+      within "#pet_application-#{@pet6.id}" do
+        expect(page).to have_content(@pet6.name)
+        expect(page).to have_content("Status: Rejected")
+        expect(page).to_not have_button("Approve Pet Application")
+        expect(page).to_not have_button("Reject Pet Application")
+      end
+
+      visit "/admin/applications/#{@app2.id}"
+
+      within "#pet_application-#{@pet6.id}" do
+        expect(page).to have_content(@pet6.name)
+        expect(page).to have_content("Status: Pending")
+        expect(page).to have_button("Approve Pet Application")
+        expect(page).to have_button("Reject Pet Application")
+        click_button("Approve Pet Application")
+      end
+
+      expect(@petapp5.reload.pet_applications_status).to eq("Approved")
+      expect(current_path).to eq("/admin/applications/#{@app2.id}")
+
+      within "#pet_application-#{@pet6.id}" do
+        expect(page).to have_content(@pet6.name)
+        expect(page).to have_content("Status: Approved")
+        expect(page).to_not have_button("Approve Pet Application")
+        expect(page).to_not have_button("Reject Pet Application")
+      end
     end
   end
 end
