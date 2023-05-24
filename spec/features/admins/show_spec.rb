@@ -41,25 +41,62 @@ RSpec.describe "Admin Shelters Show Page", type: :feature do
       # And instead I see an indicator next to the pet that they have been approved
 
       visit "/admin/applications/#{@app3.id}"
-    
+
       within "#pet_application-#{@pet5.id}" do
         expect(page).to have_content(@pet5.name)
         expect(page).to have_content("Status: Pending")
         expect(page).to have_button("Approve Pet Application")
       end
 
+      expect(@petapp6.pet_applications_status).to eq("Pending")
+
       click_button("Approve Pet Application")
       expect(current_path).to eq("/admin/applications/#{@app3.id}")
+
+      @pet5.reload
       
       within "#pet_application-#{@pet5.id}" do
         expect(page).to have_content(@pet5.name)
         expect(page).to have_content("Status: Approved")
         expect(page).to_not have_button("Approve Pet Application")
       end
+
+      expect(@petapp6.reload.pet_applications_status).to eq("Approved")
+    end
+
+    it "can deny pet applications" do
+      # 13. Rejecting a Pet for Adoption
+
+      # As a visitor
+      # When I visit an admin application show page ('/admin/applications/:id')
+      # For every pet that the application is for, I see a button to reject the application for that specific pet
+      # When I click that button
+      # Then I'm taken back to the admin application show page
+      # And next to the pet that I rejected, I do not see a button to approve or reject this pet
+      # And instead I see an indicator next to the pet that they have been rejected
+
+      visit "/admin/applications/#{@app3.id}"
+
+      within "#pet_application-#{@pet5.id}" do
+        expect(page).to have_content(@pet5.name)
+        expect(page).to have_content("Status: Pending")
+        expect(page).to have_button("Approve Pet Application")
+        expect(page).to have_button("Reject Pet Application")
+      end
+
+      expect(@petapp6.pet_applications_status).to eq("Pending")
+
+      click_button("Reject Pet Application")
+      expect(current_path).to eq("/admin/applications/#{@app3.id}")
+
+      within "#pet_application-#{@pet5.id}" do
+        expect(page).to have_content(@pet5.name)
+        expect(page).to have_content("Status: Rejected")
+        expect(page).to_not have_button("Approve Pet Application")
+        expect(page).to_not have_button("Reject Pet Application")
+      end
+
+      expect(@petapp6.reload.pet_applications_status).to eq("Rejected")
     end
   end
 end
-
-
-
-
