@@ -4,8 +4,6 @@
   <div id="pet_application-<%=pet_application.pet_id %>">
     <p>Pet Name: <%= pet_application.pet.name %> Status: <%= pet_application.pet_applications_status %></p>
     <% if pet_application.pet_applications_status == "Pending" %>
-      <%#= form_with url: { action: "approve" }, method: :patch, local: true do |f| %>
-      <%#= ^this means that we have to update adminapplicationscontroller to non restful approve method/action %>
       <%= form_with url: "/admin/applications/#{@application.id}", method: :patch, local: true do |f| %>
         <%= f.hidden_field :application_id, value: @application.id %>
         <%= f.hidden_field :pet_id, value: pet_application.pet_id %>

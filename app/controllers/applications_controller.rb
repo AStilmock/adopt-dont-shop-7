@@ -7,11 +7,9 @@ class ApplicationsController < ApplicationController
     if params[:search].present?
       @pets = Pet.search(params[:search])
       @application = Application.find(params[:id])
-      @app_petapps = PetApplication.find_applications(@application.id)
     else
       @pets = Pet.all
       @application = Application.find(params[:id])
-      @app_petapps = PetApplication.find_applications(@application.id)
     end
   end
 
@@ -22,6 +20,8 @@ class ApplicationsController < ApplicationController
   def update
     application = Application.find(params[:id])
     application.update(description: params[:description], status: "Pending")
+    applications_to_update = application.pet_applications
+    applications_to_update.update(pet_applications_status: "Pending")
     redirect_to "/applications/#{application.id}"
   end
 
@@ -33,7 +33,6 @@ class ApplicationsController < ApplicationController
     else
       redirect_to "/applications/new"
       flash[:alert] = "Error: #{error_message(new_app.errors)}"
-      # render :new plus some other syntax to keep form data
     end
   end
 
