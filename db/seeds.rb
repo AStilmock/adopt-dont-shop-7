@@ -11,17 +11,16 @@ Shelter.destroy_all
 Veterinarian.destroy_all
 VeterinaryOffice.destroy_all
 
-@shelter_1 = Shelter.create(name: "Aurora shelter", city: "Aurora, CO", foster_program: false, rank: 9)
-@shelter_2 = Shelter.create(name: "RGV animal shelter", city: "Harlingen, TX", foster_program: false, rank: 5)
-@shelter_3 = Shelter.create(name: "Fancy pets of Colorado", city: "Denver, CO", foster_program: true, rank: 10)
-@shelter_1.pets.create(name: "Mr. Pirate", breed: "tuxedo shorthair", age: 5, adoptable: true)
-@shelter_1.pets.create(name: "Clawdia", breed: "shorthair", age: 3, adoptable: true)
-@shelter_3.pets.create(name: "Lucille Bald", breed: "sphynx", age: 8, adoptable: true)
+@shelter4 = Shelter.create!(name: "Aurora shelter", city: "Aurora, CO", foster_program: false, rank: 9)
+@shelter5 = Shelter.create!(name: "RGV animal shelter", city: "Harlingen, TX", foster_program: false, rank: 5)
+@shelter6 = Shelter.create!(name: "Fancy pets of Colorado", city: "Denver, CO", foster_program: true, rank: 10)
+@shelter4.pets.create!(name: "Mr. Pirate", breed: "tuxedo shorthair", age: 5, adoptable: true)
+@shelter4.pets.create!(name: "Clawdia", breed: "shorthair", age: 3, adoptable: true)
+@shelter6.pets.create!(name: "Lucille Bald", breed: "sphynx", age: 8, adoptable: true)
 
 @shelter1 = Shelter.create!(foster_program: true, name: "Bishop Animal Rescue", city: "Bishop", rank: 5)
 @pet1 = @shelter1.pets.create!(adoptable: true, age: 3, breed: "Samoyed", name: "Fluffy")
 @pet2 = @shelter1.pets.create!(adoptable: true, age: 6, breed: "Husky", name: "Hubert")
-# ^ not applied by anyone
 @pet3 = @shelter1.pets.create!(adoptable: true, age: 8, breed: "Shiba Inu", name: "Shishi")
 
 @shelter2 = Shelter.create!(foster_program: true, name: "Chicago Animal Rescue", city: "Chicago", rank: 4)
@@ -32,13 +31,13 @@ VeterinaryOffice.destroy_all
 @pet6 = @shelter3.pets.create!(adoptable: true, age: 5, breed: "Pitbull", name: "Bully")
 
 @app1 = Application.create!(name: "Garrett", street_address: "123 Upland", city: "Bishop", state: "CA", zip_code: "12345", description: "I'm the best -DJ Khaled", status: "In Progress")
-@petapp1 = PetApplication.create!(application_id: @app1.id, pet_id: @pet1.id)
-@petapp2 = PetApplication.create!(application_id: @app1.id, pet_id: @pet4.id)
+@petapp1 = PetApplication.create!(application_id: @app1.id, pet_id: @pet1.id, pet_applications_status: "In Progress")
+@petapp2 = PetApplication.create!(application_id: @app1.id, pet_id: @pet4.id, pet_applications_status: "In Progress")
 
 @app2 = Application.create!(name: "Andy", street_address: "456 Downtown", city: "Anywhere", state: "HI", zip_code: "23456", description: "Anotha One -DJ Khaled", status: "Pending")
-@petapp3 = PetApplication.create!(application_id: @app2.id, pet_id: @pet1.id)
-@petapp4 = PetApplication.create!(application_id: @app2.id, pet_id: @pet3.id)
-@petapp5 = PetApplication.create!(application_id: @app2.id, pet_id: @pet6.id)
+@petapp3 = PetApplication.create!(application_id: @app2.id, pet_id: @pet1.id, pet_applications_status: "In Progress")
+@petapp4 = PetApplication.create!(application_id: @app2.id, pet_id: @pet3.id, pet_applications_status: "Pending")
+@petapp5 = PetApplication.create!(application_id: @app2.id, pet_id: @pet6.id, pet_applications_status: "Pending")
 
 @app3 = Application.create!(name: "Jeff", street_address: "567 Sideways", city: "Somewhere", state: "DE", zip_code: "34567", description: "We the best -DJ Khaled", status: "Rejected")
-@petapp6 = PetApplication.create!(application_id: @app3.id, pet_id: @pet5.id)
+@petapp6 = PetApplication.create!(application_id: @app3.id, pet_id: @pet5.id, pet_applications_status: "In Progress")

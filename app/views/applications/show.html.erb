@@ -10,7 +10,7 @@
 
 <div id="pets-<%= @application.id %>">
   <h3>Pet Applications</h3>
-  <% @app_petapps.each do |petapp| %>
+  <% @application.pet_applications.each do |petapp| %>
     <ul>
       <li>Pet Name: <%= link_to "#{petapp.pet.name}", "/pets/#{petapp.pet.id}"  %></li>
     </ul>
@@ -40,7 +40,7 @@
   <div id="application-submit-<%= @application.id %>">
     <h4>Why you would make a good Pet Parent?</h4>
     <%= form_with url: "/applications/#{@application.id}/", method: :patch, local: true do |f| %>
-      <%= f.label "Because..." %>
+      <%= f.label :description %>
       <br>
       <%= f.text_area :description, size: "100x5" %>
       <br>

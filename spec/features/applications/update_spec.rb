@@ -6,7 +6,6 @@ RSpec.describe "application update", type: :feature do
       @shelter1 = Shelter.create!(foster_program: true, name: "Bishop Animal Rescue", city: "Bishop", rank: 5)
       @pet1 = @shelter1.pets.create!(adoptable: true, age: 3, breed: "Samoyed", name: "Fluffy")
       @pet2 = @shelter1.pets.create!(adoptable: true, age: 6, breed: "Husky", name: "Hubert")
-      # ^ not applied by anyone
       @pet3 = @shelter1.pets.create!(adoptable: true, age: 8, breed: "Shiba Inu", name: "Shishi")
 
       @shelter2 = Shelter.create!(foster_program: true, name: "Chicago Animal Rescue", city: "Chicago", rank: 4)
@@ -44,11 +43,9 @@ RSpec.describe "application update", type: :feature do
     # And I do not see a section to add more pets to this application
     it "can add pets to an application" do
       visit "/applications/#{@app1.id}/?search=#{@pet2.name}"
-      # There should be no option to submit application
       click_button("Adopt this Pet")
       expect(current_path).to eq("/applications/#{@app1.id}")
 
-      # There should an option to submit application
       within "#application-submit-#{@app1.id}" do
         fill_in(:description, with: "Because I love puppies")
 
@@ -56,7 +53,6 @@ RSpec.describe "application update", type: :feature do
         expect(current_path).to eq("/applications/#{@app1.id}")
       end
 
-      # There should be no option to submit application
       expect(page).to have_content("Pending")
 
       within "#pets-#{@app1.id}" do
